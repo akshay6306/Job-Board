@@ -13,20 +13,18 @@ let flash = require("connect-flash");
 app.use(flash());
 
 // ! Session secret (hardcoded)
-let SESSION_SECRET_KEY = 'supersecretkey123';
+let SESSION_SECRET_KEY = process.env.SESSION_SECRET || 'supersecretkey123';
 
 // ! Session Configuration
 app.use(
     session({
         secret: SESSION_SECRET_KEY,
         resave: false,
-        saveUninitialized: true,
+        saveUninitialized: false,
         cookie: {
             httpOnly: true,
-            // secure: true //for https not for localhost
-            // 1000 milliseconds
-            expires: Date.now() + 1000 * 60 * 60 * 24,
-            maxAge: 1000 * 60 * 60 * 24,
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 1000 * 60 * 60 * 24, // 24 hours
         },
     })
 );
@@ -81,6 +79,17 @@ app.use(questionRoutes);
 app.use(userRoutes);
 app.use(authRoutes);
 app.use(jobRoutes);
+
+// Error handling middleware
+app.use((err, req, res, next) => {
+    console.error('Error:', err.stack);
+    res.status(500).send('Something broke!');
+});
+
+// 404 handler
+app.use((req, res) => {
+    res.status(404).send('Page not found');
+});
 
 // ! Server Setup
 let PORT = process.env.PORT || 3000;
