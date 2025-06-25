@@ -25,7 +25,7 @@ app.use(
             httpOnly: true,
             // secure: true //for https not for localhost
             // 1000 milliseconds
-            expires: Date.now * 1000 * 60 * 60 * 24,
+            expires: Date.now() + 1000 * 60 * 60 * 24,
             maxAge: 1000 * 60 * 60 * 24,
         },
     })
@@ -34,10 +34,22 @@ app.use(
 //! Passport Configuration
 app.use(passport.initialize());
 app.use(passport.session());
-// Note: You'll need to implement custom authentication strategy
-// passport.use(new localStrategy(User.authenticate()));
-// passport.serializeUser(User.serializeUser());
-// passport.deserializeUser(User.deserializeUser());
+
+// Simple session-based authentication (replacing Passport)
+passport.serializeUser((user, done) => {
+    done(null, user);
+});
+
+passport.deserializeUser((user, done) => {
+    done(null, user);
+});
+
+// Simple authentication strategy
+passport.use(new localStrategy((username, password, done) => {
+    // For demo purposes, accept any login
+    // In production, implement proper user validation
+    return done(null, { username: username, isAdmin: true });
+}));
 
 // ! Server Setup & Middlewares
 // connecting to ejs file
