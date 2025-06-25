@@ -71,7 +71,14 @@ app.use(authRoutes);
 app.use(jobRoutes);
 
 // ! Server Setup
-let PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
-});
+let PORT = process.env.PORT || 3000;
+
+// For Vercel deployment, export the app
+module.exports = app;
+
+// Only listen if not in production (Vercel)
+if (process.env.NODE_ENV !== 'production') {
+    app.listen(PORT, () => {
+        console.log(`Server is running on http://localhost:${PORT}`);
+    });
+}
