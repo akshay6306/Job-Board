@@ -2,8 +2,14 @@
 const jobs = require("../data/jobs.js");
 
 const home_page = (req, res) => {
-    // req.flash('success','Welcome to index jobs')
-    res.render("home-page", { page: "home-page", 'success': 'Developer : Code With Pankaj --- Must visit my GITHUB Profile :) ******* Waiting to see u there' });
+    console.log('Home page accessed');
+    try {
+        // req.flash('success','Welcome to index jobs')
+        res.render("home-page", { page: "home-page", 'success': 'Developer : Code With Pankaj --- Must visit my GITHUB Profile :) ******* Waiting to see u there' });
+    } catch (error) {
+        console.error('Error rendering home page:', error);
+        res.status(500).send('Error loading home page');
+    }
 }
 
 const index_jobs = async (req, res) => {
